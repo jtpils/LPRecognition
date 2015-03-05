@@ -10,7 +10,7 @@ imgBGR = cv2.imread('Caltech1999/image_0126.jpg',1)
 def getRGBvalue(event,x,y,flags,param):
     if event == cv2.EVENT_LBUTTONDBLCLK:
         print x , y
-        print imgBGR[x,y]
+        print imgBGR[y,x]
 
 
 #Display image
