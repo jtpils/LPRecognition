@@ -7,7 +7,7 @@ import matplotlib as plt
 for n in range(126):
 	m = n+1;
 	name = 'image_0' + str(m).zfill(3)
-	imgname = 'Caltech1999/image_0' + str(m).zfill(3) + '.jpg'
+	imgname = '../Caltech1999/image_0' + str(m).zfill(3) + '.jpg'
 	print imgname
 	imgBGR = cv2.imread(imgname,1)
 
