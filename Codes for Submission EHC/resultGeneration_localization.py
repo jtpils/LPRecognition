@@ -4,10 +4,18 @@ Created on Mon Feb 23 21:24:28 2015
 
 @author: ireti
 """
-
+"""
+This code takes input images and localizes the license plate in it.
+The output is a single localized plate image for each input image
+"""
 import cv2
 import numpy as np 
 
+## This function applies histogram of gradient method on the edge detected
+## from the input image. It uses edge density to pick candidate regions
+## and eliminates false positive using constraints (plate area/ aspect ratio)
+## all remaining false positive are removed by passint them through an svm 
+## classification stage.
 #def checkForVegetation(img):
 def hog(img):
     bin_n = 16 # Number of bins

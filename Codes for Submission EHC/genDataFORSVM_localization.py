@@ -5,43 +5,17 @@ Created on Mon Feb 23 21:24:28 2015
 @author: ireti
 """
 
+
+"""
+This code generates dataset of true license plates for training SVM model 
+to pick actual license from false candidates
+"""
+
 import cv2
 import numpy as np 
 
-#def checkForVegetation(img):
-def hog(img):
-    bin_n = 16 # Number of bins
-    
-    gx = cv2.Sobel(img, cv2.CV_32F, 1, 0)
-    gy = cv2.Sobel(img, cv2.CV_32F, 0, 1)
-    mag, ang = cv2.cartToPolar(gx, gy)
-
-    # quantizing binvalues in (0...16)
-    bins = np.int32(bin_n*ang/(2*np.pi))
-
-    # Divide to 4 sub-squares
-    xdivider = img.shape[0]/2
-    ydivider = img.shape[1]/2
-        
-    bin_cells = bins[:xdivider,:ydivider], bins[xdivider:,:ydivider], bins[:xdivider,ydivider:], bins[xdivider:,ydivider:]
-    mag_cells = mag[:xdivider,:ydivider], mag[xdivider:,:ydivider], mag[:xdivider,ydivider:], mag[xdivider:,ydivider:]
-    
-    hists = [np.bincount(b.ravel(), m.ravel(), bin_n) for b, m in zip(bin_cells, mag_cells)]
-
-    histsNormalized = [h/sum(h) for h in hists]
-    hists = histsNormalized    
-    
-    hist = np.hstack(hists)
-    return hist
-    
-
+COUNTER = 0
 def localizePlate(location):
-    #read in image
-#    imgBGR = cv2.imread('Caltech1999/image_0068.jpg',1)
-    
-
-    print 
-    print    
     
     imgBGR = cv2.imread('Caltech1999/'+location,1)
     print 'Caltech1999/'+location
@@ -63,10 +37,8 @@ def localizePlate(location):
     
     print 'ready to draw contours'
     count = 0
-    img = imgBGR.copy()
-    svmmodel = cv2.SVM()
-    svmmodel.load("./svm_data.dat")
-    print 'saved model loaded'
+    img = imgBGR.copy()    
+    imgOrig = imgBGR.copy()
     
     for cnt in range(len(contours)):
         # approximate the contour
@@ -76,21 +48,28 @@ def localizePlate(location):
         area = w*h
         if aspect_ratio > 1.2 and aspect_ratio < 4:
             if area > 500 and area < 10000:
-                box = img[y:y+h, x:x+w]
-                #extract hog
-                boxHOG = hog(box)
-                if svmmodel.predict(np.float32(boxHOG)): 
-                    cv2.rectangle(img,(x,y),(x+w,y+h),(0,255,0),2)
+                count = count + 1
+                cv2.rectangle(img,(x,y),(x+w,y+h),(0,255,0),2)
+                box = imgOrig[y:y+h, x:x+w]
+               
+                fileName = './platesDatasetGenereated/'+location[:-5]+str(count)+'.png'
+                
+                cv2.imwrite(fileName, box)
+#                COUNTER = COUNTER + 1
     
     print 'number of contours found: ', count
+#    cv2.imshow('Connected Regions ', img)
+#    cv2.waitKey(0)
     
     dirLocation = './Output/'
     outfile = dirLocation+ location[:-4] + '_output.png'
     print outfile
     cv2.imwrite(outfile, img )
+#    cv2.imwrite('./Output/connectedRegionsArea.png',img )
+    
 
-########################
-## Main Code starts here
+
+
 #localizePlate('image_0068.jpg')
 
 from os import listdir
