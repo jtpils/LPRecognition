@@ -1,4 +1,3 @@
 # CS231A-Project
 
-RGB Color codes chart
-http://www.discoveryplayground.com/computer-programming-for-kids/rgb-colors/
+License plate detection and recognition algorithm based on color histograms and SVM.
